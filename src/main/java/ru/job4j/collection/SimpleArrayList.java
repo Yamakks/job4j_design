@@ -16,30 +16,24 @@ public class SimpleArrayList<T> implements SimpleList<T> {
 
     @Override
     public void add(T value) {
-        if (container.length == size) {
-            container = Arrays.copyOf(container, container.length * 2);
-        }
-        if (container.length == 0) {
-            container = Arrays.copyOf(container, container.length + 1);
-        }
+        growUpCapacity();
         container[size++] = value;
         modCount++;
     }
 
     @Override
     public T set(int index, T newValue) {
-        T oldValue = null;
-        if (Objects.checkIndex(index, container.length) == index) {
+        T oldValue;
+        index = Objects.checkIndex(index, container.length);
             oldValue = container[index];
             container[index] = newValue;
-        }
         return oldValue;
     }
 
     @Override
     public T remove(int index) {
-        T delValue = null;
-        if (Objects.checkIndex(index, container.length) == index) {
+        T delValue;
+        index = Objects.checkIndex(index, container.length);
             delValue = container[index];
             System.arraycopy(container,
                     index + 1,
@@ -49,15 +43,16 @@ public class SimpleArrayList<T> implements SimpleList<T> {
             container[container.length - 1] = null;
             size--;
             modCount++;
-        }
         return delValue;
     }
 
     @Override
     public T get(int index) {
-        if (Objects.checkIndex(index, container.length) == index && index > size) {
+        index = Objects.checkIndex(index, container.length);
+        if (index > size) {
             throw new IndexOutOfBoundsException();
         }
+
         return container[index];
     }
 
@@ -68,15 +63,12 @@ public class SimpleArrayList<T> implements SimpleList<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
+        return new Iterator<>() {
             int index = 0;
             int mod = modCount;
 
             @Override
             public boolean hasNext() {
-                while (index > container.length) {
-                    index++;
-                }
                 if (mod != modCount) {
                     throw new ConcurrentModificationException();
                 }
@@ -85,11 +77,19 @@ public class SimpleArrayList<T> implements SimpleList<T> {
 
             @Override
             public T next() {
-                if (!hasNext() || size == 0) {
+                if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
                 return container[index++];
             }
         };
+    }
+    void growUpCapacity() {
+        if (container.length == size) {
+            container = Arrays.copyOf(container, container.length * 2);
+        }
+        if (container.length == 0) {
+            container = Arrays.copyOf(container, container.length + 10);
+        }
     }
 }
