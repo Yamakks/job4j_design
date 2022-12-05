@@ -1,8 +1,6 @@
 package ru.job4j.collection;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleArrayList<T> implements SimpleList<T> {
 
@@ -21,6 +19,9 @@ public class SimpleArrayList<T> implements SimpleList<T> {
         if (container.length == size) {
             container = Arrays.copyOf(container, container.length * 2);
         }
+        if (container.length == 0) {
+            container = Arrays.copyOf(container, container.length + 1);
+        }
         container[size++] = value;
         modCount++;
     }
@@ -31,7 +32,6 @@ public class SimpleArrayList<T> implements SimpleList<T> {
         if (Objects.checkIndex(index, container.length) == index) {
             oldValue = container[index];
             container[index] = newValue;
-            modCount++;
         }
         return oldValue;
     }
@@ -40,21 +40,25 @@ public class SimpleArrayList<T> implements SimpleList<T> {
     public T remove(int index) {
         T delValue = null;
         if (Objects.checkIndex(index, container.length) == index) {
-          delValue = container[index];
-          System.arraycopy(container,
-                  index + 1,
-                  container,
-                  index,
-                  container.length - index - 1);
-          container[container.length - 1] = null;
-          modCount++;
+            delValue = container[index];
+            System.arraycopy(container,
+                    index + 1,
+                    container,
+                    index,
+                    container.length - index - 1);
+            container[container.length - 1] = null;
+            size--;
+            modCount++;
         }
         return delValue;
     }
 
     @Override
     public T get(int index) {
-        return (Objects.checkIndex(index, container.length) == index) ? container[index] : null;
+        if (Objects.checkIndex(index, container.length) == index && index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+        return container[index];
     }
 
     @Override
@@ -64,6 +68,28 @@ public class SimpleArrayList<T> implements SimpleList<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new Iterator<T>() {
+            int index = 0;
+            int mod = modCount;
+
+            @Override
+            public boolean hasNext() {
+                while (index > container.length) {
+                    index++;
+                }
+                if (mod != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return (index < container.length && size > 0);
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext() || size == 0) {
+                    throw new NoSuchElementException();
+                }
+                return container[index++];
+            }
+        };
     }
 }
