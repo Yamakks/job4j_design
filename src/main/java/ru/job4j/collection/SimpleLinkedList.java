@@ -1,6 +1,8 @@
 package ru.job4j.collection;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class SimpleLinkedList<E> implements LinkedList<E> {
@@ -26,11 +28,11 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
     @Override
     public E get(int index) {
         Objects.checkIndex(index, size);
-        int ind = 0;
+        int position = 0;
         Node<E> current = head;
-        while (ind != index) {
+        while (position != index) {
             current = current.next;
-            ind++;
+            position++;
         }
         return current.item;
         }
@@ -38,7 +40,27 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new Iterator<>() {
+            int index = 0;
+            int mod = modCount;
+
+            @Override
+            public boolean hasNext() {
+                if (mod != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return (index < size && size > 0);
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                index++;
+                return head.item;
+            }
+        };
     }
 
     private static class Node<E> {
