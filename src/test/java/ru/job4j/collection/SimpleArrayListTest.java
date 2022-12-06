@@ -207,4 +207,14 @@ class SimpleArrayListTest {
         list.set(0, 22);
         assertThat(iterator.next()).isEqualTo(22);
     }
+    @Test
+    void whenContainerLengthMoreSizeCheckIterator() {
+        SimpleList<Integer> list = new SimpleArrayList<>(10);
+        list.add(1);
+        list.add(2);
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.next()).isEqualTo(1);
+        assertThat(iterator.next()).isEqualTo(2);
+        assertThat(iterator.hasNext()).isFalse();
+    }
 }

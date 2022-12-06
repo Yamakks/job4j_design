@@ -24,7 +24,7 @@ public class SimpleArrayList<T> implements SimpleList<T> {
     @Override
     public T set(int index, T newValue) {
         T oldValue;
-        index = Objects.checkIndex(index, container.length);
+        index = Objects.checkIndex(index, size);
             oldValue = container[index];
             container[index] = newValue;
         return oldValue;
@@ -33,7 +33,7 @@ public class SimpleArrayList<T> implements SimpleList<T> {
     @Override
     public T remove(int index) {
         T delValue;
-        index = Objects.checkIndex(index, container.length);
+        index = Objects.checkIndex(index, size);
             delValue = container[index];
             System.arraycopy(container,
                     index + 1,
@@ -48,7 +48,7 @@ public class SimpleArrayList<T> implements SimpleList<T> {
 
     @Override
     public T get(int index) {
-        index = Objects.checkIndex(index, container.length);
+        index = Objects.checkIndex(index, size);
         if (index > size) {
             throw new IndexOutOfBoundsException();
         }
@@ -72,7 +72,7 @@ public class SimpleArrayList<T> implements SimpleList<T> {
                 if (mod != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                return (index < container.length && size > 0);
+                return (index < size && size > 0);
             }
 
             @Override
@@ -89,7 +89,7 @@ public class SimpleArrayList<T> implements SimpleList<T> {
             container = Arrays.copyOf(container, container.length * 2);
         }
         if (container.length == 0) {
-            container = Arrays.copyOf(container, container.length + 10);
+            container = Arrays.copyOf(container, 10);
         }
     }
 }
