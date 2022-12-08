@@ -24,7 +24,6 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
 
         size++;
         modCount++;
-
     }
 
     @Override
