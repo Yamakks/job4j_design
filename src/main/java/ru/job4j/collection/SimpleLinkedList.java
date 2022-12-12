@@ -17,7 +17,7 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
         } else {
             Node<E> bufNode = head;
             while (bufNode.next != null) {
-                bufNode = bufNode.next;
+               bufNode = bufNode.next;
             }
             bufNode.next = newNode;
         }
@@ -29,7 +29,11 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
     @Override
     public E get(int index) {
         Objects.checkIndex(index, size);
-        return null;
+        Node<E> bufNode = head;
+        for (int i = 0; i < index; i++) {
+            bufNode = bufNode.next;
+        }
+        return index == 0 ? head.item : bufNode.item;
     }
 
     @Override
