@@ -32,38 +32,37 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
     public E get(int index) {
         Objects.checkIndex(index, size);
         Node<E> bufNode = head;
-        for (int i = 0; i < index; i++) {
+        for (int i = 1; i <= index; i++) {
             bufNode = bufNode.next;
         }
-        return index == 0 ? head.item : bufNode.item;
+        return bufNode.item;
     }
 
     @Override
     public Iterator<E> iterator() {
         return new Iterator<>() {
-        int index = 0;
-        int mod = modCount;
-
-        @Override
-        public boolean hasNext() {
-            if (mod != modCount) {
-                throw new ConcurrentModificationException();
-            }
-            return index < size;
-        }
-
-        @Override
-        public E next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
             Node<E> bufNode = head;
-            bufNode = index == 0 ? bufNode : bufNode.next;
-            index++;
-            return bufNode.item;
-        }
-    };
-}
+            int mod = modCount;
+
+            @Override
+            public boolean hasNext() {
+                if (mod != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                return bufNode != null;
+            }
+
+            @Override
+            public E next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                Node<E> bufNodenext = bufNode;
+                bufNode = bufNode.next;
+                return bufNodenext.item;
+            }
+        };
+    }
 
     private static class Node<E> {
         private E item;
