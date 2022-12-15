@@ -3,6 +3,7 @@ package ru.job4j.collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.*;
@@ -88,6 +89,35 @@ class SimpleLinkedListTest {
         assertThat(second.hasNext()).isTrue();
         assertThat(second.next()).isEqualTo(2);
         assertThat(second.hasNext()).isFalse();
+    }
+
+    @Test
+    void whenIteratorThenListModifiedThenFalse() {
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next()).isEqualTo(1);
+        assertThat(iterator.hasNext()).isTrue();
+        list.add(4);
+        assertThatThrownBy(iterator::hasNext)
+                .isInstanceOf(ConcurrentModificationException.class);
+    }
+
+    @Test
+    void whenMoreSizeCheckIterator() {
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.next()).isEqualTo(1);
+        assertThat(iterator.next()).isEqualTo(2);
+        assertThat(iterator.hasNext()).isFalse();
+    }
+
+    @Test
+    void whenCheckIteratorThenGetThenHasNextIsTrue() {
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next()).isEqualTo(1);
+        assertThat(list.get(0)).isEqualTo(1);
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next()).isEqualTo(2);
     }
 
 }
