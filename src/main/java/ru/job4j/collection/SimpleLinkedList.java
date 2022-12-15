@@ -44,6 +44,7 @@ public class SimpleLinkedList<E> implements LinkedList<E> {
             Node<E> bufNode = head;
             int mod = modCount;
 
+
             @Override
             public boolean hasNext() {
                 if (mod != modCount) {
