@@ -77,7 +77,7 @@ public class ForwardLinked<E> implements Iterable<E> {
             throw new NoSuchElementException();
         }
         Node<E> deleted = head;
-            head = null;
+            head.item = null;
             head = deleted.next;
             deleted.next = null;
             size--;
