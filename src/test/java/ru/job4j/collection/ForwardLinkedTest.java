@@ -144,4 +144,15 @@ class ForwardLinkedTest {
         assertThat(second.hasNext()).isFalse();
     }
 
+    @Test
+    void whenAddFirstFirsIsSeven() {
+        list.addFirst(5);
+        list.add(6);
+        list.addFirst(7);
+        Iterator<Integer> it = list.iterator();
+        assertThat(it.next()).isEqualTo(7);
+        assertThat(it.next()).isEqualTo(5);
+        assertThat(it.next()).isEqualTo(1);
+    }
+
 }
