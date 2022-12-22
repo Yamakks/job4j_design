@@ -63,8 +63,8 @@ public class ForwardLinked<E> implements Iterable<E> {
     }
 
     private static class Node<E> {
-        private E item;
-        private Node<E> next;
+        E item;
+        Node<E> next;
 
         Node(E element, Node<E> next) {
             this.item = element;
@@ -88,6 +88,6 @@ public class ForwardLinked<E> implements Iterable<E> {
     public void addFirst(E value) {
         size++;
         modCount++;
-        head = new Node<>(value, head);
+        head = new Node<E>(value, head);
         }
 }
