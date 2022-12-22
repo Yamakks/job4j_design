@@ -155,4 +155,15 @@ class ForwardLinkedTest {
         assertThat(it.next()).isEqualTo(1);
     }
 
+    @Test
+    void whenDeleteFirstFirsIsOne() {
+        list.addFirst(5);
+        list.add(6);
+        list.addFirst(7);
+        list.deleteFirst();
+        list.deleteFirst();
+        Iterator<Integer> it = list.iterator();
+        assertThat(it.next()).isEqualTo(1);
+    }
+
 }
