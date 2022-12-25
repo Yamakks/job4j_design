@@ -91,4 +91,23 @@ public class ForwardLinked<E> implements Iterable<E> {
         modCount++;
         head = new Node<E>(value, head);
         }
+
+    public boolean revert() {
+        boolean result = true;
+        if (size == 1 || head == null) {
+            result = false;
+        } else {
+            Node<E> now = head;
+            Node<E> forw;
+            Node<E> prev = null;
+            for (int i = 0; i < size; i++) {
+                forw = now.next;
+                now.next = prev;
+                prev = now;
+                now = forw;
+                head = prev;
+            }
+        }
+        return result;
+    }
 }
