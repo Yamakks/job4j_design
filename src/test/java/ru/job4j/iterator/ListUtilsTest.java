@@ -41,5 +41,32 @@ class ListUtilsTest {
         ListUtils.addAfter(input, 2, 4);
         assertThat(input).hasSize(4).containsSequence(1, 3, 2, 4);
     }
+    @Test
+    void whenDeleteIfBiggerOrEquals4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 2, 5);
+        ListUtils.addAfter(input, 2, 6);
+        ListUtils.removeIf(input, c -> c >= 4);
+        assertThat(input).hasSize(3).containsSequence(1, 3, 2);
+    }
 
+    @Test
+    void whenDeleteIfLess4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 2, 5);
+        ListUtils.addAfter(input, 2, 6);
+        ListUtils.removeIf(input, c -> c < 4);
+        assertThat(input).hasSize(3).containsSequence(6, 5, 4);
+    }
+    @Test
+    void whenDeleteIfEquals4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 3, 5);
+        ListUtils.addAfter(input, 4, 6);
+        ListUtils.removeIf(input, c -> c == 4);
+        assertThat(input).hasSize(5).containsSequence(1, 3, 2, 5, 6);
+    }
 }
