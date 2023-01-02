@@ -69,4 +69,44 @@ class ListUtilsTest {
         ListUtils.removeIf(input, c -> c == 4);
         assertThat(input).hasSize(5).containsSequence(1, 3, 2, 5, 6);
     }
+
+    @Test
+    void whenReplaceIfBiggerOrEquals4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 3, 5);
+        ListUtils.addAfter(input, 4, 6);
+        ListUtils.replaceIf(input, c -> c >= 4, 7);
+        assertThat(input).hasSize(6).containsSequence(1, 3, 2, 7, 7, 7);
+    }
+
+    @Test
+    void whenReplaceIfLess4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 3, 5);
+        ListUtils.addAfter(input, 4, 6);
+        ListUtils.replaceIf(input, c -> c < 4, 99);
+        assertThat(input).hasSize(6).containsSequence(99, 99, 99, 4, 5, 6);
+    }
+    @Test
+    void whenReplaceIfEquals4() {
+        ListUtils.addAfter(input, 1, 2);
+        ListUtils.addAfter(input, 2, 4);
+        ListUtils.addAfter(input, 3, 5);
+        ListUtils.addAfter(input, 4, 6);
+        ListUtils.replaceIf(input, c -> c == 4, 10);
+        assertThat(input).hasSize(6).containsSequence(1, 3, 2, 10, 5, 6);
+    }
+
+    @Test
+    void whenReplaceAnotherList() {
+        List<Integer> anotherList = new ArrayList<>(Arrays.asList(1, 4, 5));
+        ListUtils.addAfter(input, 1, 4);
+        ListUtils.addAfter(input, 2, 5);
+        ListUtils.addAfter(input, 3, 6);
+        ListUtils.addAfter(input, 4, 7);
+        ListUtils.removeAll(input, anotherList);
+        assertThat(input).hasSize(3).containsSequence(3, 6, 7);
+    }
 }
