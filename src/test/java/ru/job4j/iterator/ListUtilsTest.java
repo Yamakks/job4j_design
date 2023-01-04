@@ -24,6 +24,13 @@ class ListUtilsTest {
     }
 
     @Test
+    void whenDoubleAddBefore() {
+        ListUtils.addBefore(input, 1, 2);
+        ListUtils.addBefore(input, 1, 5);
+        assertThat(input).hasSize(4).containsSequence(1, 5, 2, 3);
+    }
+
+    @Test
     void whenAddBeforeWithInvalidIndex() {
         assertThatThrownBy(() -> ListUtils.addBefore(input, 3, 2))
                 .isInstanceOf(IndexOutOfBoundsException.class);

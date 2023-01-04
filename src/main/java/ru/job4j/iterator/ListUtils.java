@@ -6,28 +6,21 @@ import java.util.function.Predicate;
 public class ListUtils {
     public static <T> void addBefore(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> iterator = list.listIterator();
-        while (iterator.hasNext()) {
-            if (iterator.nextIndex() == index) {
-                iterator.add(value);
-                break;
-            }
-            iterator.next();
-        }
+        ListIterator<T> iterator = list.listIterator(index);
+        iterator.add(value);
+        iterator.next();
     }
 
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> iterator = list.listIterator();
-        while (iterator.hasNext()) {
-            if (iterator.nextIndex() == index) {
-                iterator.next();
-                iterator.add(value);
-                break;
-            }
+        if (index == list.size()) {
+            ListIterator<T> iterator = list.listIterator();
+            iterator.add(value);
             iterator.next();
+        } else {
+            ListIterator<T> iterator = list.listIterator(index + 1);
+            iterator.add(value);
         }
-
     }
 
     public static <T> void removeIf(List<T> list, Predicate<T> filter) {
@@ -36,9 +29,7 @@ public class ListUtils {
             if (filter.test(iterator.next())) {
                 iterator.remove();
             }
-
         }
-
     }
 
     public static <T> void replaceIf(List<T> list, Predicate<T> filter, T value) {
@@ -56,13 +47,9 @@ public class ListUtils {
     public static <T> void removeAll(List<T> list, List<T> elements) {
         ListIterator<T> iterator = list.listIterator();
         while (iterator.hasNext()) {
-            T el = iterator.next();
-            for (T element : elements) {
-                if (el == element) {
-                    iterator.remove();
-                }
+           if (elements.contains(iterator.next())) {
+               iterator.remove();
             }
-
         }
     }
 }
