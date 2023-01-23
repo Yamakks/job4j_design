@@ -33,7 +33,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public V get(K key) {
         int hk = key == null ? 0 : hash(key.hashCode());
-        return (table[indexFor(hk)].key.equals(0)) ? null : table[indexFor(hk)].value;
+        return (table[indexFor(hk)].value == null) ? null : table[indexFor(hk)].value;
     }
 
     @Override
