@@ -1,6 +1,12 @@
 package ru.job4j.map;
 
+import ru.job4j.collection.ForwardLinked;
+
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class SimpleMap<K, V> implements Map<K, V> {
 
@@ -33,7 +39,15 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public V get(K key) {
         int hk = key == null ? 0 : hash(key.hashCode());
-        return (table[indexFor(hk)].value == null) ? null : table[indexFor(hk)].value;
+        MapEntry<K, V> mapCell = table[indexFor(hk)];
+        K tableKey = mapCell.key;
+        V result;
+        if (mapCell == null || key != tableKey) {
+            result = null;
+        } else {
+            result = mapCell.value;
+        }
+        return result;
     }
 
     @Override
@@ -41,10 +55,14 @@ public class SimpleMap<K, V> implements Map<K, V> {
         boolean result;
         int hk = key == null ? 0 : hash(key.hashCode());
         MapEntry<K, V> mapCell = table[indexFor(hk)];
+        MapEntry<K, V>[] mapBuf = table;
         K tableKey = mapCell.key;
-        if (hk == hash(tableKey.hashCode()) && tableKey.equals(key)) {
+        if (mapCell != null && tableKey == key) {
             result = true;
-            mapCell = null;
+            //mapCell = null;
+            Arrays.stream(table)
+                    .filter(kvMapEntry -> kvMapEntry.key != key && kvMapEntry.key == null)
+                    .toArray();
             modCount++;
             count--;
         } else {
@@ -55,8 +73,31 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return new Iterator<>() {
+        MapEntry<K, V>[] bufMap = table;
+        int mod = modCount;
+        int index = 0;
+
+        @Override
+            public boolean hasNext() {
+                if (mod != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+            while (index < capacity && bufMap[index] == null) {
+                index++;
+            }
+                return  index < capacity;
+            }
+        @Override
+            public K next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return bufMap[index++].key;
+            }
+        };
     }
+
 
     private int hash(int hashCode) {
         return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 8);
