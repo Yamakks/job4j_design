@@ -17,7 +17,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public boolean put(K key, V value) {
         boolean result;
-        int hk = hash(key.hashCode());
+        int hk = key == null ? 0 : hash(key.hashCode());
         if (table[indexFor(hk)] != null) {
             result = false;
         } else {
@@ -32,13 +32,25 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(K key) {
-        int hk = hash(key.hashCode());
-        return table[indexFor(hk)] == null ? null : table[indexFor(hk)].value;
+        int hk = key == null ? 0 : hash(key.hashCode());
+        return (table[indexFor(hk)].key.equals(0)) ? null : table[indexFor(hk)].value;
     }
 
     @Override
     public boolean remove(K key) {
-        return false;
+        boolean result;
+        int hk = key == null ? 0 : hash(key.hashCode());
+        MapEntry<K, V> mapCell = table[indexFor(hk)];
+        K tableKey = mapCell.key;
+        if (hk == hash(tableKey.hashCode()) && tableKey.equals(key)) {
+            result = true;
+            mapCell = null;
+            modCount++;
+            count--;
+        } else {
+            result = false;
+        }
+        return result;
     }
 
     @Override
@@ -47,7 +59,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     }
 
     private int hash(int hashCode) {
-        return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 16);
+        return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 8);
     }
 
     private int indexFor(int hash) {
