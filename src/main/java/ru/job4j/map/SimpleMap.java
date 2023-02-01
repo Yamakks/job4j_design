@@ -23,6 +23,9 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public boolean put(K key, V value) {
         boolean result;
+        if ((float) count / capacity > LOAD_FACTOR) {
+            expand();
+        }
         int hk = key == null ? 0 : hash(key.hashCode());
         if (table[indexFor(hk)] != null) {
             result = false;
@@ -31,7 +34,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
             count++;
             modCount++;
             result = true;
-            expand();
         }
 
         return result;
@@ -71,7 +73,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public Iterator<K> iterator() {
         return new Iterator<>() {
-        MapEntry<K, V>[] bufMap = table;
         int mod = modCount;
         int index = 0;
 
@@ -80,7 +81,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
                 if (mod != modCount) {
                     throw new ConcurrentModificationException();
                 }
-            while (index < capacity && bufMap[index] == null) {
+            while (index < capacity && table[index] == null) {
                 index++;
             }
                 return  index < capacity;
@@ -90,14 +91,14 @@ public class SimpleMap<K, V> implements Map<K, V> {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                return bufMap[index++].key;
+                return table[index++].key;
             }
         };
     }
 
 
     private int hash(int hashCode) {
-        return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 16);
+        return hashCode;
     }
 
     private int indexFor(int hash) {
@@ -105,7 +106,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
     }
 
     private void expand() {
-        if ((float) count / capacity > LOAD_FACTOR) {
             capacity = capacity * 2;
             MapEntry<K, V>[] newTable = new MapEntry[capacity];
             for (MapEntry<K, V> sockets : table) {
@@ -115,7 +115,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
                 }
             }
             table = newTable;
-        }
     }
 
     private static class MapEntry<K, V> {
