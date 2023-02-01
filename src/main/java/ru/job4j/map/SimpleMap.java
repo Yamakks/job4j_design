@@ -31,6 +31,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
             count++;
             modCount++;
             result = true;
+            expand();
         }
 
         return result;
@@ -53,16 +54,12 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public boolean remove(K key) {
         boolean result;
+
         int hk = key == null ? 0 : hash(key.hashCode());
-        MapEntry<K, V> mapCell = table[indexFor(hk)];
-        MapEntry<K, V>[] mapBuf = table;
-        K tableKey = mapCell.key;
-        if (mapCell != null && tableKey == key) {
+        K tableKey = table[indexFor(hk)].key;
+        if (tableKey == key) {
             result = true;
-            //mapCell = null;
-            Arrays.stream(table)
-                    .filter(kvMapEntry -> kvMapEntry.key != key && kvMapEntry.key == null)
-                    .toArray();
+            table[indexFor(hk)] = null;
             modCount++;
             count--;
         } else {
@@ -100,7 +97,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
 
     private int hash(int hashCode) {
-        return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 8);
+        return (hashCode == 0) ? 0 : hashCode ^ (hashCode >>> 16);
     }
 
     private int indexFor(int hash) {
@@ -108,8 +105,16 @@ public class SimpleMap<K, V> implements Map<K, V> {
     }
 
     private void expand() {
-        if ((float) (count / capacity) >= LOAD_FACTOR) {
-            capacity *= 2;
+        if ((float) count / (float) capacity > LOAD_FACTOR) {
+            capacity = capacity * 2;
+            MapEntry<K, V>[] newTable = new MapEntry[capacity];
+            for (MapEntry<K, V> sockets : table) {
+                if (sockets != null) {
+                    int hk = hash(sockets.key.hashCode());
+                    newTable[indexFor(hk)] = sockets;
+                }
+            }
+            table = newTable;
         }
     }
 
