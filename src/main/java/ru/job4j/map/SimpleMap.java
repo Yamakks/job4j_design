@@ -105,7 +105,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     }
 
     private void expand() {
-        if ((float) count / (float) capacity > LOAD_FACTOR) {
+        if ((float) count / capacity > LOAD_FACTOR) {
             capacity = capacity * 2;
             MapEntry<K, V>[] newTable = new MapEntry[capacity];
             for (MapEntry<K, V> sockets : table) {
