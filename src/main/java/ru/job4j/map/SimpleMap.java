@@ -111,7 +111,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
             for (MapEntry<K, V> sockets : table) {
                 if (sockets != null) {
                     int hk = hash(sockets.key.hashCode());
-                    newTable[indexFor(hk)] = sockets;
+                    newTable[indexFor(hk)] = new MapEntry<>(sockets.key, sockets.value);
                 }
             }
             table = newTable;

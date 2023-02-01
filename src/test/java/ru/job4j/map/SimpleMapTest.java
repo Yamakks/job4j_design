@@ -153,5 +153,4 @@ class SimpleMapTest {
         assertThat(map.put(0, "0")).isTrue();
         assertThat(map.get(null)).isNull();
     }
-
 }
