@@ -30,7 +30,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
             expand();
         }
         int index = indexFor(hKey(key));
-        if (table[index] == null){
+        if (table[index] == null) {
             table[index] = new MapEntry<>(key, value);
             count++;
             modCount++;
