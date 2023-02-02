@@ -20,17 +20,18 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     private MapEntry<K, V>[] table = new MapEntry[capacity];
 
+    public int hKey(K key) {
+        return key == null ? 0 : hash(key.hashCode());
+    }
     @Override
     public boolean put(K key, V value) {
-        boolean result;
-        if ((float) count / capacity > LOAD_FACTOR) {
+        boolean result = false;
+        if ((float) count / capacity >= LOAD_FACTOR) {
             expand();
         }
-        int hk = key == null ? 0 : hash(key.hashCode());
-        if (table[indexFor(hk)] != null) {
-            result = false;
-        } else {
-            table[indexFor(hk)] = new MapEntry<>(key, value);
+        int index = indexFor(hKey(key));
+        if (table[index] == null){
+            table[index] = new MapEntry<>(key, value);
             count++;
             modCount++;
             result = true;
@@ -41,27 +42,18 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(K key) {
-        int hk = key == null ? 0 : hash(key.hashCode());
-        MapEntry<K, V> mapCell = table[indexFor(hk)];
-        K tableKey = mapCell.key;
-        V result;
-        if (mapCell == null || key != tableKey) {
-            result = null;
-        } else {
-            result = mapCell.value;
-        }
-        return result;
+        int index = indexFor(hKey(key));
+        return table[index] != null && table[index].key == key ? table[index].value : null;
     }
 
     @Override
     public boolean remove(K key) {
         boolean result;
-
-        int hk = key == null ? 0 : hash(key.hashCode());
-        K tableKey = table[indexFor(hk)].key;
-        if (tableKey == key) {
+        int hk = hKey(key);
+        int index = indexFor(hk);
+        if (table[index] != null && table[index].key == key) {
             result = true;
-            table[indexFor(hk)] = null;
+            table[index] = null;
             modCount++;
             count--;
         } else {
@@ -73,7 +65,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public Iterator<K> iterator() {
         return new Iterator<>() {
-        int mod = modCount;
+        final int mod = modCount;
         int index = 0;
 
         @Override
@@ -110,8 +102,8 @@ public class SimpleMap<K, V> implements Map<K, V> {
             MapEntry<K, V>[] newTable = new MapEntry[capacity];
             for (MapEntry<K, V> sockets : table) {
                 if (sockets != null) {
-                    int hk = hash(sockets.key.hashCode());
-                    newTable[indexFor(hk)] = new MapEntry<>(sockets.key, sockets.value);
+                    int index = indexFor(hKey(sockets.key));
+                    newTable[indexFor(index)] = new MapEntry<>(sockets.key, sockets.value);
                 }
             }
             table = newTable;
