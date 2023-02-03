@@ -2,10 +2,7 @@ package ru.job4j.map;
 
 import ru.job4j.collection.ForwardLinked;
 
-import java.util.Arrays;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimpleMap<K, V> implements Map<K, V> {
@@ -20,7 +17,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     private MapEntry<K, V>[] table = new MapEntry[capacity];
 
-    public int hKey(K key) {
+    private int hKey(K key) {
         return key == null ? 0 : hash(key.hashCode());
     }
     @Override
@@ -43,7 +40,8 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public V get(K key) {
         int index = indexFor(hKey(key));
-        return table[index] != null && table[index].key == key ? table[index].value : null;
+        return table[index] != null && Objects.equals(hKey(key), hKey(table[index].key))
+                && Objects.equals(key, table[index].key) ? table[index].value : null;
     }
 
     @Override
@@ -51,7 +49,8 @@ public class SimpleMap<K, V> implements Map<K, V> {
         boolean result;
         int hk = hKey(key);
         int index = indexFor(hk);
-        if (table[index] != null && table[index].key == key) {
+        if (table[index] != null && Objects.equals(hKey(key), hKey(table[index].key))
+                && Objects.equals(key, table[index].key)) {
             result = true;
             table[index] = null;
             modCount++;
@@ -103,7 +102,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
             for (MapEntry<K, V> sockets : table) {
                 if (sockets != null) {
                     int index = indexFor(hKey(sockets.key));
-                    newTable[indexFor(index)] = new MapEntry<>(sockets.key, sockets.value);
+                    newTable[indexFor(index)] = sockets;
                 }
             }
             table = newTable;
@@ -118,6 +117,5 @@ public class SimpleMap<K, V> implements Map<K, V> {
             this.key = key;
             this.value = value;
         }
-
     }
 }
