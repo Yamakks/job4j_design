@@ -40,7 +40,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public V get(K key) {
         int index = indexFor(hKey(key));
-        return table[index] != null && Objects.equals(hKey(key), hKey(table[index].key))
+        return table[index] != null && hKey(key) == hKey(table[index].key)
                 && Objects.equals(key, table[index].key) ? table[index].value : null;
     }
 
@@ -49,7 +49,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
         boolean result;
         int hk = hKey(key);
         int index = indexFor(hk);
-        if (table[index] != null && Objects.equals(hKey(key), hKey(table[index].key))
+        if (table[index] != null && hKey(key) == hKey(table[index].key)
                 && Objects.equals(key, table[index].key)) {
             result = true;
             table[index] = null;
