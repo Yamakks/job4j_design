@@ -8,14 +8,25 @@ public class Analize {
         int changes = 0;
         int deletes = 0;
         int addes = 0;
+        for (User prev : previous) {
+            if (!current.contains(prev)) {
+                deletes++;
+            }
+        }
         for (User currents : current) {
-            for (User prev : previous) {
+            if (!previous.contains(currents)) {
+                addes++;
+            }
+        }
+        for (User prev : previous) {
+            for (User currents : current) {
                 if (prev.getId() == currents.getId() && !Objects.equals(prev.getName(), currents.getName())) {
                     changes++;
+                    addes--;
+                    deletes--;
                 }
             }
         }
-
         return new Info(addes, changes, deletes);
     }
 }
