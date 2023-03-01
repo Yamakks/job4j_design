@@ -7,7 +7,7 @@ public class Analize {
     public static Info diff(Set<User> previous, Set<User> current) {
         int changes = 0;
         int deletes = 0;
-        int addes = 0;
+        int adds = 0;
         for (User prev : previous) {
             if (!current.contains(prev)) {
                 deletes++;
@@ -15,18 +15,18 @@ public class Analize {
         }
         for (User currents : current) {
             if (!previous.contains(currents)) {
-                addes++;
+                adds++;
             }
         }
         for (User prev : previous) {
             for (User currents : current) {
                 if (prev.getId() == currents.getId() && !Objects.equals(prev.getName(), currents.getName())) {
                     changes++;
-                    addes--;
+                    adds--;
                     deletes--;
                 }
             }
         }
-        return new Info(addes, changes, deletes);
+        return new Info(adds, changes, deletes);
     }
 }
