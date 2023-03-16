@@ -2,9 +2,13 @@ package ru.job4j.io;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.String.join;
 
 
 public class LogFilter {
@@ -12,9 +16,12 @@ public class LogFilter {
         List<String> result = new ArrayList<>();
         try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             result = in.lines()
-                    .filter(s -> s.matches("(.*) 404 (.*)"))
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
+                    .map(lines -> lines.split(" "))
+                    .filter(s -> s[s.length - 2].equals("404"))
+                    .map(s -> join(" ", s))
+                    .toList();
+        } catch (IOException e) {
+            System.out.println("Ошибка при вводе/выводе данных из файла!");
             e.printStackTrace();
         }
         return result;
