@@ -26,6 +26,9 @@ public class LogFilter {
         }
         return result;
     }
+    public static void save(List<String> log, String file) {
+
+    }
 
 
     public static void main(String[] args) {
