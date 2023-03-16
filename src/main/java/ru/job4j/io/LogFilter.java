@@ -17,7 +17,7 @@ public class LogFilter {
         try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             result = in.lines()
                     .map(lines -> lines.split(" "))
-                    .filter(s -> s[s.length - 2].equals("404"))
+                    .filter(s -> "404".equals(s[s.length - 2]))
                     .map(s -> join(" ", s))
                     .toList();
         } catch (IOException e) {
