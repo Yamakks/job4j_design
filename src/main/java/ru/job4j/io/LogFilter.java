@@ -30,9 +30,7 @@ public class LogFilter {
                 new BufferedOutputStream(
                         new FileOutputStream(file)
                 ))) {
-            for (String l : log) {
-                out.printf("%s%n", l);
-            }
+            log.forEach(out::println);
         } catch (IOException e) {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
             e.printStackTrace();
