@@ -12,20 +12,26 @@ public class Config {
         this.path = path;
     }
 
+    private boolean isCorrect(String[] el) {
+        boolean rsl = el.length == 2;
+        if ((el[0].isEmpty() || el[1].isEmpty())) {
+                throw new IllegalArgumentException("некорректное заполнение файла конфигурации");
+            }
+        return rsl;
+    }
+
     public void load() {
         try (BufferedReader in = new BufferedReader(new FileReader(path))) {
             List<String[]> list;
             list = in.lines()
                     .filter(lines -> !lines.contains("#") && !lines.isEmpty())
                     .map(l -> l.split("=", 2))
+                    .filter(this::isCorrect)
                     .toList();
             if (list.isEmpty()) {
                 throw new NoSuchElementException("файл конфигурации пуст");
             }
             for (String[] el : list) {
-                if (el[0].isEmpty() || el[1].isEmpty()) {
-                    throw new IllegalArgumentException("некорректное заполнение файла конфигурации");
-                }
                 values.put(el[0], el[1]);
             }
 
