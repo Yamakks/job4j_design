@@ -12,7 +12,7 @@ public class Analysis {
         try (BufferedReader in = new BufferedReader(new FileReader(source));
              BufferedWriter out = new BufferedWriter(new FileWriter(target, true))) {
             for (String s : in.lines().toList()) {
-                if (isOff(s))
+                System.out.println(s);
             }
         } catch (IOException e) {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
