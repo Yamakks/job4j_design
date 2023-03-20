@@ -14,7 +14,7 @@ public class Config {
 
     private boolean isCorrect(String[] el) {
         boolean rsl = el.length == 2;
-        if ((el[0].isEmpty() || el[1].isEmpty())) {
+        if (el.length != 2 || el[0].isEmpty() || el[1].isEmpty()) {
                 throw new IllegalArgumentException("некорректное заполнение файла конфигурации");
             }
         return rsl;
