@@ -1,12 +1,19 @@
 package ru.job4j.io;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Analysis {
+    private boolean isOff(String s) {
+        return (s.contains("500") || s.contains("400"));
+    }
     public void unavailable(String source, String target) {
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(source));
-             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(target, true))) {
-            out.write(in.readAllBytes());
+        try (BufferedReader in = new BufferedReader(new FileReader(source));
+             BufferedWriter out = new BufferedWriter(new FileWriter(target, true))) {
+            for (String s : in.lines().toList()) {
+                if (isOff(s))
+            }
         } catch (IOException e) {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
             e.printStackTrace();
