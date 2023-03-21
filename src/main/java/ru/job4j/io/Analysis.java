@@ -11,23 +11,17 @@ public class Analysis {
     public void unavailable(String source, String target) {
         try (BufferedReader in = new BufferedReader(new FileReader(source));
              BufferedWriter out = new BufferedWriter(new FileWriter(target))) {
-            boolean flag = true;
+            boolean flag = false;
             String line;
+            List<String> buf = new ArrayList<>();
             while ((line = in.readLine()) != null) {
-                if (isOff(line)) {
-                    if (flag) {
-                        out.write(line, 4, line.length() - 4);
-                        out.write(";");
-                        flag = false;
-                    }
-                } else {
-                    if (!flag) {
-                        out.write(line, 4, line.length() - 4);
-                        out.write(";");
-                        out.write(System.lineSeparator());
-                        flag = true;
-                    }
+                if (flag != isOff(line)) {
+                    flag = isOff(line);
+                        buf.add(line.split(" ", 2)[1]);
                 }
+            }
+            for (int i = 0, j = 1; j < buf.size(); i = i + 2, j = j + 2) {
+                out.write(String.format("%s%s%s%n", buf.get(i), ";", buf.get(j)));
             }
             } catch (IOException e) {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
