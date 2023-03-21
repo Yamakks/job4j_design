@@ -10,11 +10,26 @@ public class Analysis {
     }
     public void unavailable(String source, String target) {
         try (BufferedReader in = new BufferedReader(new FileReader(source));
-             BufferedWriter out = new BufferedWriter(new FileWriter(target, true))) {
-            for (String s : in.lines().toList()) {
-                System.out.println(s);
+             BufferedWriter out = new BufferedWriter(new FileWriter(target))) {
+            boolean flag = true;
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (isOff(line)) {
+                    if (flag) {
+                        out.write(line, 4, line.length() - 4);
+                        out.write(";");
+                        flag = false;
+                    }
+                } else {
+                    if (!flag) {
+                        out.write(line, 4, line.length() - 4);
+                        out.write(";");
+                        out.write(System.lineSeparator());
+                        flag = true;
+                    }
+                }
             }
-        } catch (IOException e) {
+            } catch (IOException e) {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
             e.printStackTrace();
         }
