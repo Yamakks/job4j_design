@@ -11,6 +11,5 @@ public class DuplicatesFinder {
         DuplicatesVisitor visitor = new DuplicatesVisitor();
         Files.walkFileTree(Path.of("./"), visitor);
         visitor.printDuplicates();
-
     }
 }
