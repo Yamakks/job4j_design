@@ -23,11 +23,8 @@ public class Search {
     }
 
     private static boolean validateArgs(String[] args) {
-        if (args[0].length() == 0) {
-            throw new IllegalArgumentException("Root folder is null. Usage  ROOT_FOLDER.");
-        }
-        if (args[1].length() == 0) {
-            throw new IllegalArgumentException("Filename extension is null. Usage  FILENAME_EXTENSION.");
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Some args is null.");
         }
         return true;
     }
