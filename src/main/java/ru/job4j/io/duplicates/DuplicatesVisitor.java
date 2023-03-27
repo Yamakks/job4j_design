@@ -14,22 +14,25 @@ import static java.util.Objects.hash;
 
 public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
 
-    private final Map<Integer, List<Path>> files = new HashMap<>();
+    private final Map<FileProperty, List<Path>> files = new HashMap<>();
 
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            if (Files.isRegularFile(file)) {
-                FileProperty el = new FileProperty(Files.size(file), file.toFile().getName());
-                int hc = el.hashCode();
-                List<Path> someFiles = files.getOrDefault(hc, new ArrayList<>());
-                someFiles.add(file);
-                files.put(hc, someFiles);
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        FileProperty el = new FileProperty(Files.size(file), file.toFile().getName());
+        List<Path> someFiles = files.computeIfAbsent(el, k -> new ArrayList<>());
+        someFiles.add(file);
+        files.putIfAbsent(el, someFiles);
+        return CONTINUE;
+    }
+
+    public void printDuplicates() throws IOException {
+        for (List<Path> duplicList : files.values()) {
+            if (duplicList.size() > 1) {
+                System.out.println(duplicList.get(0).getFileName() + ", " + Files.size(duplicList.get(0)) + " bytes");
+                for (Path p : duplicList) {
+                    System.out.println(p.toAbsolutePath());
+                }
             }
-
-            return CONTINUE;
         }
-
-    public Map<Integer, List<Path>> getFiles() {
-        return files;
     }
 }
