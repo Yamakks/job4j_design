@@ -23,8 +23,14 @@ public class Search {
     }
 
     private static boolean validateArgs(String[] args) {
-        if (args.length < 2) {
+        if (args.length != 2) {
             throw new IllegalArgumentException("Some args is null.");
+        }
+        if (!args[0].contains("\\")) {
+            throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
+    }
+        if (!args[1].contains(".js")) {
+            throw new IllegalArgumentException("File parameter is incorrect. Usage  .js parameter.");
         }
         return true;
     }
