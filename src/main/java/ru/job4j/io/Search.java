@@ -26,7 +26,7 @@ public class Search {
         if (args.length != 2) {
             throw new IllegalArgumentException("Some args is null.");
         }
-        if (!args[0].contains("\\")) {
+        if (!args[0].contains("C:\\Projects\\")) {
             throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
     }
         if (!args[1].contains(".js")) {
