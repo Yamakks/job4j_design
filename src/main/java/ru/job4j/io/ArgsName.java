@@ -17,6 +17,9 @@ public class ArgsName {
         if (values.isEmpty()) {
             throw new IllegalArgumentException("Arguments not passed to program");
     }
+        if (!values.containsKey(key)) {
+            throw new IllegalArgumentException("This key:" + "\\'" + key.toString() + "\\'" + " is missin");
+        }
         return values.get(key);
     }
 
