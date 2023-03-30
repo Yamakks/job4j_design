@@ -31,7 +31,7 @@ public class Search {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
     }
-        if (!args[1].startsWith(".") & !(args[1].length() > 1)) {
+        if (!args[1].startsWith(".") && !(args[1].length() > 1)) {
             throw new IllegalArgumentException("File parameter is incorrect. Usage  .js parameter.");
         }
         return true;
