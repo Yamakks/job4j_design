@@ -6,16 +6,17 @@ import java.util.stream.Collectors;
 public class ArgsName {
     private final Map<String, String> values = new HashMap<>();
 
+    private boolean inControl(String el) {
+        return (!el.isEmpty() && el.charAt(0) == '-');
+    }
     private boolean isCorrect(String[] el) {
-        boolean rsl = el.length == 2;
-        if (!rsl || el[0].isEmpty() || el[1].isEmpty()) {
-            throw new IllegalArgumentException("некорректное заполнение файла конфигурации");
-        }
-        return rsl;
+        return el.length == 2 && !(el[0].isEmpty()) && !(el[1].isEmpty());
     }
 
     public String get(String key) {
-        /* TODO add the necessary checks. */
+        if (values.isEmpty()) {
+            throw new IllegalArgumentException("Arguments not passed to program");
+    }
         return values.get(key);
     }
 
@@ -23,11 +24,13 @@ public class ArgsName {
         List<String> list = new ArrayList<>(Arrays.asList(args));
         List<String[]> buf =
         list.stream()
+                .filter(this::inControl)
+                .map(s -> s.substring(1))
                 .map(s -> s.split("=", 2))
                 .filter(this::isCorrect)
                 .toList();
         for (String[] b : buf) {
-            values.put(b[0].substring(1), b[1]);
+            values.put(b[0], b[1]);
         }
         /* TODO parse args to values. */
     }
