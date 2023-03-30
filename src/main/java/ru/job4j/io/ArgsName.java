@@ -1,10 +1,18 @@
 package ru.job4j.io;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArgsName {
     private final Map<String, String> values = new HashMap<>();
+
+    private boolean isCorrect(String[] el) {
+        boolean rsl = el.length == 2;
+        if (!rsl || el[0].isEmpty() || el[1].isEmpty()) {
+            throw new IllegalArgumentException("некорректное заполнение файла конфигурации");
+        }
+        return rsl;
+    }
 
     public String get(String key) {
         /* TODO add the necessary checks. */
@@ -12,6 +20,15 @@ public class ArgsName {
     }
 
     private void parse(String[] args) {
+        List<String> list = new ArrayList<>(Arrays.asList(args));
+        List<String[]> buf =
+        list.stream()
+                .map(s -> s.split("=", 2))
+                .filter(this::isCorrect)
+                .toList();
+        for (String[] b : buf) {
+            values.put(b[0].substring(1), b[1]);
+        }
         /* TODO parse args to values. */
     }
 
