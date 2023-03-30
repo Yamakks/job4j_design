@@ -23,7 +23,7 @@ public class Search {
         return searcher.getPaths();
     }
 
-    private static boolean validateArgs(String[] args) throws IOException {
+    private static boolean validateArgs(String[] args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("Some args is null.");
         }
