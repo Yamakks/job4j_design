@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -22,14 +23,15 @@ public class Search {
         return searcher.getPaths();
     }
 
-    private static boolean validateArgs(String[] args) {
+    private static boolean validateArgs(String[] args) throws IOException {
         if (args.length != 2) {
             throw new IllegalArgumentException("Some args is null.");
         }
-        if (!args[0].contains("C:\\Projects\\")) {
+        Path path = Path.of(args[0]);
+        if (!Files.exists(path)) {
             throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
     }
-        if (!args[1].contains(".js")) {
+        if (!args[1].startsWith(".") & !(args[1].length() > 1)) {
             throw new IllegalArgumentException("File parameter is incorrect. Usage  .js parameter.");
         }
         return true;
