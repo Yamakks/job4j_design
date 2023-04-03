@@ -8,48 +8,33 @@ public class ArgsName {
 
     private boolean argContainsValue(String el) {
         if (el.split("=", 2)[1].isEmpty()) {
-            throw new IllegalArgumentException("Error: This argument "
-                    + "'"
-                    + el
-                    + "'"
-                    + " does not contain a value");
+            throw new IllegalArgumentException(String.format("Error: This argument '%s' does not contain a value", el));
         }
         return true;
     }
     private boolean argContainsKey(String el) {
         if ((el.split("=", 2)[0].substring(1).isEmpty())) {
-            throw new IllegalArgumentException("Error: This argument "
-                    + "'"
-                    + el
-                    + "'"
-                    + " does not contain a key");
+            throw new IllegalArgumentException(String.format("Error: This argument '%s' does not contain a key", el));
         }
         return true;
     }
     private boolean containEqualsSign(String el) {
         if (!(el.contains("="))) {
-            throw new IllegalArgumentException("Error: This argument "
-                    + "'"
-                    + el
-                    + "'"
-                    + " does not contain an equal sign");
+            throw new IllegalArgumentException(String.format("Error: This argument '%s' does not contain an equal sign", el));
         }
         return true;
     }
     private boolean startSign(String el) {
         if (!el.startsWith("-")) {
-            throw new IllegalArgumentException("Error: This argument "
-                    + "'"
-                    + el
-                    + "'"
-                    + " does not start with a '-' character");
+            throw new IllegalArgumentException(
+                    String.format("Error: This argument '%s' does not start with a '-' character", el));
         }
         return true;
     }
 
     public String get(String key) {
         if (!values.containsKey(key)) {
-            throw new IllegalArgumentException("This key: " + "'" + key + "'" + " is missing");
+            throw new IllegalArgumentException(String.format("This key: '%s' is missing", key));
         }
         return values.get(key);
     }
