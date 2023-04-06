@@ -32,8 +32,16 @@ public class Zip {
         return true;
     }
     public void packFiles(List<File> sources, File target) {
-        for (File source : sources) {
-            packSingleFile(source, target);
+        try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
+            for (File source :sources) {
+                zip.putNextEntry(new ZipEntry(source.getPath()));
+                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source))) {
+                    zip.write(out.readAllBytes());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Ошибка при вводе/выводе данных из файла!");
+            e.printStackTrace();
         }
     }
 
@@ -59,7 +67,7 @@ public class Zip {
            ArgsName argName = ArgsName.of(args);
            Path path = Paths.get(argName.get("d"));
            Path condition = Paths.get(argName.get("e"));
-           List<Path> list = Search.search(path, p -> !p.toFile().getName().equals(condition));
+           List<Path> list = Search.search(path, p -> !p.toString().endsWith(String.valueOf(condition)));
            List<File> fileList = new ArrayList<>();
            for (Path paths : list) {
                fileList.add(paths.toFile());
