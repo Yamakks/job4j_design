@@ -73,7 +73,6 @@ public class Zip {
                fileList.add(paths.toFile());
            }
            Path path1 = Path.of(argName.get("o"));
-           //Path destination = Files.createFile(path1);
            Zip zipproj = new Zip();
            zipproj.packFiles(fileList, new File(path1.toString()));
        }
