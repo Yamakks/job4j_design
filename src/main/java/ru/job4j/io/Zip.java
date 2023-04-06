@@ -14,28 +14,26 @@ import java.util.zip.ZipOutputStream;
 
 public class Zip {
 
-    private static boolean validateArgs(String[] args) {
-
-        if (args.length != 3) {
-            throw new IllegalArgumentException("Some args is null.");
-        }
-        Path path = Path.of(args[0].substring(3));
+    private static void validateArgs(ArgsName argsName) {
+        String dir = argsName.get("d");
+        String predicate = argsName.get("e");
+        String destination = argsName.get("o");
+        Path path = Path.of(dir);
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
         }
-        if (!args[1].startsWith(".") && !(args[1].length() > 1)) {
+        if (predicate.startsWith(".") && !(predicate.length() > 1)) {
             throw new IllegalArgumentException("File parameter is incorrect. Usage  .* parameter.");
         }
-        if ("^[^\\s]+\\.[^\\s.]+$".matches(args[2])) {
+        if ("^[^\\s]+\\.[^\\s.]+$".matches(destination)) {
             throw new IllegalArgumentException("File name is incorrect. Usage  *.* parameter.");
         }
-        return true;
     }
-    public void packFiles(List<File> sources, File target) {
+    public void packFiles(List<Path> sources, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
-            for (File source :sources) {
-                zip.putNextEntry(new ZipEntry(source.getPath()));
-                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source))) {
+            for (Path source :sources) {
+                zip.putNextEntry(new ZipEntry(source.toString()));
+                try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source.toFile()))) {
                     zip.write(out.readAllBytes());
                 }
             }
@@ -45,7 +43,7 @@ public class Zip {
         }
     }
 
-    public void packSingleFile(File source, File target) {
+    /**public void packSingleFile(File source, File target) {
         try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(target)))) {
             zip.putNextEntry(new ZipEntry(source.getPath()));
             try (BufferedInputStream out = new BufferedInputStream(new FileInputStream(source))) {
@@ -55,26 +53,30 @@ public class Zip {
             System.out.println("Ошибка при вводе/выводе данных из файла!");
             e.printStackTrace();
         }
-    }
+    }*/
 
     public static void main(String[] args) throws IOException {
-           Zip zip = new Zip();
-           zip.packSingleFile(
-                   new File("./pom.xml"),
-                   new File("./pom.zip")
-           );
-        if (validateArgs(args)) {
-           ArgsName argName = ArgsName.of(args);
-           Path path = Paths.get(argName.get("d"));
-           Path condition = Paths.get(argName.get("e"));
+        System.out.println(args.length);
+        if (!(args.length == 3)) {
+            throw new IllegalArgumentException("Some args is null.");
+        }
+        ArgsName argsName = ArgsName.of(args);
+        validateArgs(argsName);
+        /**Zip zip = new Zip();
+        zip.packSingleFile(
+                new File("./pom.xml"),
+                new File("./pom.zip")
+           );*/
+           Path path = Paths.get(argsName.get("d"));
+           Path condition = Paths.get(argsName.get("e"));
            List<Path> list = Search.search(path, p -> !p.toString().endsWith(String.valueOf(condition)));
-           List<File> fileList = new ArrayList<>();
+           /**List<File> fileList = new ArrayList<>();
            for (Path paths : list) {
                fileList.add(paths.toFile());
-           }
-           Path path1 = Path.of(argName.get("o"));
+           }*/
+           Path path1 = Path.of(argsName.get("o"));
            Zip zipproj = new Zip();
-           zipproj.packFiles(fileList, new File(path1.toString()));
-       }
+           zipproj.packFiles(list, new File(path1.toString()));
+
     }
 }
