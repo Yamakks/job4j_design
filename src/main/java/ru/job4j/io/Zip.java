@@ -18,10 +18,10 @@ public class Zip {
         if (!Files.exists(path)) {
             throw new IllegalArgumentException("Root folder is incorrect. Usage  ROOT_FOLDER.");
         }
-        if (!(predicate.startsWith(".")) && !(predicate.length() > 1)) {
+        if (!predicate.startsWith(".") || predicate.length() < 2) {
             throw new IllegalArgumentException("File parameter is incorrect. Usage  .* parameter.");
         }
-        if (!(destination.endsWith(".zip")) && !(destination.length() > 4)) {
+        if (!destination.endsWith(".zip") || destination.length() < 5) {
             throw new IllegalArgumentException("File name is incorrect. Usage  *.zip parameter.");
         }
     }
