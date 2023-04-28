@@ -27,7 +27,7 @@ public class ConsoleChat {
         log.add("Начните общение с ботом, напишите боту");
         System.out.println(log.get(1));
         String question = "";
-        while (!question.equals(OUT)) {
+        while (!OUT.equals(question)) {
             question = sc.nextLine();
             log.add(question);
             if (STOP.equals(question)) {
