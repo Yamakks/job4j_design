@@ -1,49 +1,61 @@
 package ru.job4j.io;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Stream;
+import java.util.StringJoiner;
 
 public class CSVReader {
     public static void handle(ArgsName argsName) throws Exception {
+        List<List<String>> data = new ArrayList<>();
+        List<List<String>> filteredList = new ArrayList<>();
+        String source = argsName.get("path");
+        String target = argsName.get("out");
         String delimiter = argsName.get("delimiter");
-        Scanner scanner = new Scanner(new File(argsName.get("path")));
-        String line = scanner.nextLine();
-        List<Integer> integers = checkColumnForDelete(line, argsName.get("filter"), delimiter);
-        String rsl = null;
-        boolean firstLine = true;
-        while (scanner.hasNextLine()) {
-            if (firstLine) {
-                firstLine = false;
-                rsl = generatingString(line, integers, delimiter)
-                        + System.lineSeparator();
-                continue;
+        String[] filters = argsName.get("filter").split(",");
+        List<Integer> indexes;
+        int index = 0;
+        int size = 0;
+        try (Scanner scanner = new Scanner(Paths.get(source).toFile());
+             PrintWriter out = "stdout".equals(target)
+                     ? new PrintWriter(System.out)
+                     : new PrintWriter(new FileWriter(target))) {
+            String[] head = scanner.nextLine().split(delimiter);
+            size = head.length;
+            for (String s : head) {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                data.add(list);
             }
-            rsl = rsl.concat(generatingString(scanner.nextLine(), integers, delimiter)
-                    + System.lineSeparator());
+            scanner.useDelimiter("(;)|(\n)|(\r\n)");
+            while (scanner.hasNext()) {
+                String value = scanner.next();
+                data.get(index).add(value);
+                index++;
+                if (index == size) {
+                    index = 0;
+                }
+            }
+            for (String f : filters) {
+                for (List<String> list : data) {
+                    if (f.equals(list.get(0))) {
+                        filteredList.add(list);
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < data.get(0).size(); i++) {
+                StringJoiner rsl = new StringJoiner(delimiter);
+                for (int j = 0; j < filters.length - 1; j++) {
+                    rsl.add(filteredList.get(j).get(i));
+                }
+                out.println(rsl);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        printResult(rsl, argsName);
-    }
-
-    private static String generatingString(String line, List<Integer> cellForDelete, String delimiter) {
-        List<String> tmp = List.of(line.split(delimiter));
-        return tmp.stream()
-                .filter(s -> cellForDelete.contains(tmp.indexOf(s)))
-                .reduce((s1, s2) -> s1 + delimiter + s2).get();
-    }
-
-    private static List<Integer> checkColumnForDelete(String firstLine, String columnForDelete, String delimiter) {
-        List<String> arr = List.of(firstLine.split(delimiter));
-        return Stream.of(columnForDelete.split(","))
-                .filter(arr::contains)
-                .map(arr::indexOf)
-                .toList();
     }
 
     private static void validateArgs(ArgsName argsName) {
@@ -56,17 +68,6 @@ public class CSVReader {
         }
         if ("\";\"".equals(argsName.get("delimiter"))) {
             throw new IllegalArgumentException("Указан разделитель не для CSV-файла");
-        }
-    }
-    private static void printResult(String rsl, ArgsName argsName) {
-        if ("stdout".equals(argsName.get("out"))) {
-            System.out.println(rsl);
-        } else {
-            try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(argsName.get("out")))) {
-                out.write(rsl.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
     public static void main(String[] args) throws Exception {
