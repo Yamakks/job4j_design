@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.StringJoiner;
 
 public class CSVReader {
-    public static void handle(ArgsName argsName) throws IOException {
+    public static void handle(ArgsName argsName) {
         List<List<String>> data = new ArrayList<>();
         List<List<String>> filteredList = new ArrayList<>();
         String source = argsName.get("path");
@@ -16,7 +16,7 @@ public class CSVReader {
         String delimiter = argsName.get("delimiter");
         String[] filters = argsName.get("filter").split(",");
         int index = 0;
-        int size = 0;
+        int size;
         try (Scanner scanner = new Scanner(Paths.get(source).toFile());
              PrintWriter out = "stdout".equals(target)
                      ? new PrintWriter(System.out)
@@ -28,7 +28,7 @@ public class CSVReader {
                 list.add(s);
                 data.add(list);
             }
-            scanner.useDelimiter("(;)|(\n)|(\r\n)");
+            scanner.useDelimiter(delimiter + "|(\n)|(\r\n)");
             while (scanner.hasNext()) {
                 String value = scanner.next();
                 data.get(index).add(value);
