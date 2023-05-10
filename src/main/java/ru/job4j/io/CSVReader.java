@@ -8,14 +8,13 @@ import java.util.Scanner;
 import java.util.StringJoiner;
 
 public class CSVReader {
-    public static void handle(ArgsName argsName) throws Exception {
+    public static void handle(ArgsName argsName) throws IOException {
         List<List<String>> data = new ArrayList<>();
         List<List<String>> filteredList = new ArrayList<>();
         String source = argsName.get("path");
         String target = argsName.get("out");
         String delimiter = argsName.get("delimiter");
         String[] filters = argsName.get("filter").split(",");
-        List<Integer> indexes;
         int index = 0;
         int size = 0;
         try (Scanner scanner = new Scanner(Paths.get(source).toFile());
@@ -48,7 +47,7 @@ public class CSVReader {
             }
             for (int i = 0; i < data.get(0).size(); i++) {
                 StringJoiner rsl = new StringJoiner(delimiter);
-                for (int j = 0; j < filters.length - 1; j++) {
+                for (int j = 0; j < filters.length; j++) {
                     rsl.add(filteredList.get(j).get(i));
                 }
                 out.println(rsl);
@@ -57,6 +56,7 @@ public class CSVReader {
             e.printStackTrace();
         }
     }
+
 
     private static void validateArgs(ArgsName argsName) {
         File f = new File(argsName.get("path"));
