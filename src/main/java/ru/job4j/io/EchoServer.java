@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 public class EchoServer {
     public static void main(String[] args) throws IOException {
@@ -16,10 +18,12 @@ public class EchoServer {
                      BufferedReader in = new BufferedReader(
                              new InputStreamReader(socket.getInputStream()))) {
                     out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-                    switch (in.readLine()) {
+                    String s = in.readLine();
+                    s = s.split(" ")[1].split("=")[1];
+                    switch (s) {
                         case ("Hello") -> out.write("Hello".getBytes());
                         case ("Exit") -> server.close();
-                        default -> out.write(in.readLine().getBytes());
+                        default -> out.write(s.getBytes());
                     }
                     for (String str = in.readLine(); str != null && !str.isEmpty(); str = in.readLine()) {
                         System.out.println(str);
