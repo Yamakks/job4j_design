@@ -20,7 +20,7 @@ public class UsageLog4j {
         double d = 3.5;
         boolean bool = false;
         char ch = 'a';
-        LOG.debug("debug message: byte {}, short {}, int {}, long {}," +
-                "float {}, double {}, boolean {}, char {}", b, sh, i, l, f, d, bool, ch);
+        LOG.debug("debug message: byte {}, short {}, int {}, long {},"
+                + "float {}, double {}, boolean {}, char {}", b, sh, i, l, f, d, bool, ch);
     }
 }
