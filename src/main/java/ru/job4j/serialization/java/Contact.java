@@ -5,12 +5,14 @@ import java.nio.file.Files;
 
 public class Contact implements Serializable {
     private static final long serialVersionUID = 1L;
-    transient private final int zipCode;
+    private final int zipCode;
     private final String phone;
+    private final String email;
 
-    public Contact(int zipCode, String phone) {
+    public Contact(int zipCode, String phone, String email) {
         this.zipCode = zipCode;
         this.phone = phone;
+        this.email = email;
     }
 
     public int getZipCode() {
@@ -25,11 +27,12 @@ public class Contact implements Serializable {
     public String toString() {
         return "Contact{"
                + "zipCode=" + zipCode
-                + ", phone='" + phone + '\''
+                + ", phone='" + phone
+                + ", email='" + email + '\''
                 + '}';
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    /** public static void main(String[] args) throws IOException, ClassNotFoundException {
         final Contact contact = new Contact(123456, "+7 (111) 111-11-11");
 
         File tempFile = Files.createTempFile(null, null).toFile();
@@ -46,4 +49,5 @@ public class Contact implements Serializable {
             System.out.println(contactFromFile);
         }
     }
+     */
 }
