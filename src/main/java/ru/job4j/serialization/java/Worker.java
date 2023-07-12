@@ -39,19 +39,20 @@ public class Worker {
         System.out.println(workerGson);
         final Worker personDeser = gson.fromJson(workerGson, Worker.class);
         System.out.println(personDeser);
-        final String personJson =
+        final String WorkerJson =
                     "{"
                             + "\"marry\":true,"
                             + "\"age\":19,"
                             + "\"contact\":"
                             + "{"
                             + "\"zipCode\":495,"
-                            + "\"phone\":\"+7(495)111-111-11-11\""
+                            + "\"phone\":\"11-11\","
+                            + "\"email\":\"blabla@bla.com\""
                             + "},"
                             + "\"statuses\":"
                             + "[\"Student\",\"Free\"]"
                             + "}";
-            final Worker personMod = gson.fromJson(personJson, Worker.class);
+            final Worker personMod = gson.fromJson(WorkerJson, Worker.class);
             System.out.println(personMod);
     }
 }
