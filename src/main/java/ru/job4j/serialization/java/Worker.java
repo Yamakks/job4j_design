@@ -3,15 +3,30 @@ package ru.job4j.serialization.java;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Arrays;
 
+@XmlRootElement(name = "worker")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Worker {
+    @XmlAttribute
+    private boolean marry;
+    @XmlAttribute
+    private int age;
+    private Contact contact;
+    private String[] statuses;
 
-    private final boolean marry;
-    private final int age;
-    private final Contact contact;
-    private final String[] statuses;
-
+    public Worker() { }
     public Worker(boolean marry, int age, Contact contact, String[] statuses) {
         this.marry = marry;
         this.age = age;
@@ -29,30 +44,46 @@ public class Worker {
                 + '}';
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JAXBException, IOException {
 
         final Worker person = new Worker(false, 30, new Contact(11, "4578",
-                    "blabla@bla.com"),
+                "blabla@bla.com"),
                 new String[]{"Head of department", "Department of IT"});
+        JAXBContext context = JAXBContext.newInstance(Worker.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        String xml;
         final Gson gson = new GsonBuilder().create();
         final String workerGson = gson.toJson(person);
         System.out.println(workerGson);
         final Worker personDeser = gson.fromJson(workerGson, Worker.class);
         System.out.println(personDeser);
         final String WorkerJson =
-                    "{"
-                            + "\"marry\":true,"
-                            + "\"age\":19,"
-                            + "\"contact\":"
-                            + "{"
-                            + "\"zipCode\":495,"
-                            + "\"phone\":\"11-11\","
-                            + "\"email\":\"blabla@bla.com\""
-                            + "},"
-                            + "\"statuses\":"
-                            + "[\"Student\",\"Free\"]"
-                            + "}";
-            final Worker personMod = gson.fromJson(WorkerJson, Worker.class);
-            System.out.println(personMod);
+                "{"
+                        + "\"marry\":true,"
+                        + "\"age\":19,"
+                        + "\"contact\":"
+                        + "{"
+                        + "\"zipCode\":495,"
+                        + "\"phone\":\"11-11\","
+                        + "\"email\":\"blabla@bla.com\""
+                        + "},"
+                        + "\"statuses\":"
+                        + "[\"Student\",\"Free\"]"
+                        + "}";
+        final Worker personMod = gson.fromJson(WorkerJson, Worker.class);
+        System.out.println(personMod);
+
+
+        try (StringWriter writer = new StringWriter()) {
+        marshaller.marshal(person, writer);
+        xml = writer.getBuffer().toString();
+        System.out.println(xml);
     }
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        try (StringReader reader = new StringReader(xml)) {
+            Worker result = (Worker) unmarshaller.unmarshal(reader);
+            System.out.println(result);
+            }
+        }
 }
