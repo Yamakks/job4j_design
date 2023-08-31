@@ -2,6 +2,7 @@ package ru.job4j.serialization.java;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.json.JSONObject;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,12 +27,30 @@ public class Worker {
     private Contact contact;
     private String[] statuses;
 
-    public Worker() { }
+    public Worker() {
+    }
+
     public Worker(boolean marry, int age, Contact contact, String[] statuses) {
         this.marry = marry;
         this.age = age;
         this.contact = contact;
         this.statuses = statuses;
+    }
+
+    public boolean isMarry() {
+        return marry;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public String[] getStatuses() {
+        return statuses;
     }
 
     @Override
@@ -76,14 +95,27 @@ public class Worker {
 
 
         try (StringWriter writer = new StringWriter()) {
-        marshaller.marshal(person, writer);
-        xml = writer.getBuffer().toString();
-        System.out.println(xml);
-    }
+            marshaller.marshal(person, writer);
+            xml = writer.getBuffer().toString();
+            System.out.println(xml);
+        }
         Unmarshaller unmarshaller = context.createUnmarshaller();
         try (StringReader reader = new StringReader(xml)) {
             Worker result = (Worker) unmarshaller.unmarshal(reader);
             System.out.println(result);
-            }
         }
+
+        final Worker worker1 = new Worker(false, 150, new Contact(999, "112233",
+                "WhiteBlaxk@blow.com"),
+                new String[]{"Head of department", "Department of IT"});
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("marry", worker1.isMarry());
+        jsonObject.put("age", worker1.getAge());
+        jsonObject.put("contact", worker1.getContact());
+        jsonObject.put("statuses", worker1.getStatuses());
+
+        System.out.println(jsonObject.toString());
+
+        System.out.println(new JSONObject(worker1).toString());
+    }
 }
