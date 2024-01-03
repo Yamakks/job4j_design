@@ -1,7 +1,7 @@
 package ru.job4j.io.ioexam;
 
 import ru.job4j.io.ArgsName;
-import ru.job4j.io.SearchFiles;
+import ru.job4j.io.Search;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class Arg {
         }
     }
 
-    public static void find(ArgsName argsName) throws IOException {
+    public static void find(ArgsName argsName) {
         validate(argsName);
         String source = argsName.get("d");
         String fileName = argsName.get("n");
@@ -46,10 +46,8 @@ public class Arg {
             Pattern pattern = Pattern.compile(fileName);
             condition = p -> pattern.matcher(p.getFileName().toString()).find();
         }
-        SearchFiles fileFinder = new SearchFiles(condition);
-        Files.walkFileTree(Path.of(source), fileFinder);
         try (PrintWriter out = new PrintWriter(new FileWriter(result))) {
-            fileFinder.getPaths().forEach(out :: println);
+            Search.search(Path.of(source), condition).forEach(out :: println);
         } catch (IOException e) {
             e.printStackTrace();
         }
