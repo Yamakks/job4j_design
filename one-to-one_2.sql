@@ -4,13 +4,13 @@ create table gosnumber(
     region int
 );
 
-create table gosnumber_car(
+create table car(
     id serial primary key,
     name varchar(255),
 	color varchar(255)
 );
-create table passport_people(
+create table gosnumber_car(
     id serial primary key,
-    gosnumber_id int references gosnumber(id) unique
+    gosnumber_id int references gosnumber(id) unique,
     car_id int references car(id) unique
 );
