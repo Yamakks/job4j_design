@@ -6,31 +6,9 @@
 	 id serial primary key,
      stat boolean
  );
- create table attach(
-	 id serial primary key,
-     attachment varchar(255),
-	 categories_id int references categories(id),
-	 states_id int references states(id)
- ); 
- create table commentary(
-	 id serial primary key,
-     commentaries varchar(255)
- );
- create table roles(
+  create table roles(
 	 id serial primary key,
      name varchar(255)
- );
- create table items(
-	 id serial primary key,
-     name varchar(255),
-	 commentary_id int references commentary(id),
-	 attach_id int references attach(id)
- );
-create table users(
-     id serial primary key,
-     name varchar(255),
-	 roles_id int references roles(id),
-	 items_id int references items(id)
  );
  create table rules(
 	 id serial primary key,
@@ -38,12 +16,33 @@ create table users(
 	 delete boolean,
 	 comment boolean
  );
- create table rules_roles(
+  create table rules_roles(
 	 id serial primary key,
      rules_id int references rules(id),
 	 roles_id int references roles(id)
  );
- 
+ create table users(
+     id serial primary key,
+     name varchar(255),
+	 roles_id int references roles(id)
+ );
+  create table items(
+	 id serial primary key,
+     name varchar(255),
+	 category_id int references categories(id),
+	 user_id int references users(id),
+	 states_id int references states(id)
+ );
+ create table attach(
+	 id serial primary key,
+     attachment varchar(255),
+	 item_id int references items(id)
+ );
+ create table commentary(
+	 id serial primary key,
+     commentaries varchar(255),
+	 item_id int references items(id)
+ );
  
  
  
