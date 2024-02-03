@@ -7,7 +7,7 @@ left join car_bodies b on c.id_body = b.id
 left join car_engines e on c.id_engine = e.id
 left join car_transmissions t on c.id_transmission = t.id;
 
-/*--выбираем неиспользуемые кузова
+--выбираем неиспользуемые кузова
 select b.name body_unUse
 from car_bodies b
 left join cars c on b.id = c.id_body
@@ -26,4 +26,4 @@ select t.name transmission_unUse
 from car_transmissions t
 left join cars c on t.id = c.id_transmission
 where c.id_transmission is null
-group by t.name;*/
+group by t.name;
