@@ -63,17 +63,15 @@ or replace function NDS2()
     returns trigger as
 $$
     BEGIN
-        update products
-        set price = price + price * 0.2
-        where id = new.id;
-        return NEW;
+        new.price = new.price* 1.2;
+        return new;
     END;
 $$
 LANGUAGE 'plpgsql';
 
 -- Создаем триггер начисления НДС который действует на запись
 create trigger NDS2_trigger
-    after insert
+    before insert
     on products
     for each row
     execute procedure NDS2();
@@ -129,10 +127,3 @@ select * from products;
 
 -- Проверяем таблицу истории
 select * from history_of_price;
-
-
-
-
-
-
-
