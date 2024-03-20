@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.StringJoiner;
 
@@ -13,27 +14,35 @@ public class TableEditor implements AutoCloseable {
 
     private Properties properties;
 
-    public TableEditor(Properties properties) throws SQLException {
+    public TableEditor(Properties properties) throws SQLException, IOException {
         this.properties = properties;
         initConnection();
     }
 
-    private void initConnection() throws SQLException {
-        Properties config = new Properties();
+    private void initConnection() throws SQLException, IOException {
+
         try (InputStream in = TableEditor.class.getClassLoader().getResourceAsStream("app.properties")) {
-            config.load(in);
-        } catch (IOException e) {
-            e.printStackTrace();
+            properties.load(in);
         }
-        String url = config.getProperty("url");
-        String login = config.getProperty("login");
-        String password = config.getProperty("password");
-        connection = DriverManager.getConnection(url, login, password);
+        String url = properties.getProperty("url");
+        String login = properties.getProperty("login");
+        String password = properties.getProperty("password");
+        try (Connection connection1 = DriverManager.getConnection(url, login, password)) {
+            connection=connection1;
+        }
 
     }
 
-    public void createTable(String tableName) {
+
+    public void createTable(String tableName) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            String sql = String.format(
+                    "CREATE TABLE " + tableName
+            );
+            statement.executeQuery(sql);
+        }
     }
+        /*
 
     public void dropTable(String tableName) {
     }
@@ -65,7 +74,7 @@ public class TableEditor implements AutoCloseable {
             }
         }
         return buffer.toString();
-    }
+    }*/
 
     @Override
     public void close() throws Exception {
@@ -73,4 +82,9 @@ public class TableEditor implements AutoCloseable {
             connection.close();
         }
     }
+        public static void main(String[] args) throws Exception {
+        Properties pr = new Properties();
+            TableEditor tb = new TableEditor(pr);
+            tb.createTable("1");
+        }
 }
