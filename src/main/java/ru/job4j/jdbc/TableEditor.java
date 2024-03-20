@@ -27,19 +27,17 @@ public class TableEditor implements AutoCloseable {
         String url = properties.getProperty("url");
         String login = properties.getProperty("login");
         String password = properties.getProperty("password");
-        try (Connection connection1 = DriverManager.getConnection(url, login, password)) {
-            connection=connection1;
-        }
-
+        connection = DriverManager.getConnection(url, login, password);
     }
 
 
     public void createTable(String tableName) throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            String sql = String.format(
-                    "CREATE TABLE " + tableName
-            );
-            statement.executeQuery(sql);
+            StringBuilder sql = new StringBuilder();
+            sql.append("CREATE TABLE IF NOT EXISTS ");
+            sql.append(tableName);
+            sql.append(" (dummyColumn INT);");
+            statement.execute(sql.toString());
         }
     }
         /*
@@ -56,7 +54,7 @@ public class TableEditor implements AutoCloseable {
     public void renameColumn(String tableName, String columnName, String newColumnName) {
     }
 
-
+*/
     public String getTableScheme(String tableName) throws Exception {
         var rowSeparator = "-".repeat(30).concat(System.lineSeparator());
         var header = String.format("%-15s|%-15s%n", "NAME", "TYPE");
@@ -74,7 +72,7 @@ public class TableEditor implements AutoCloseable {
             }
         }
         return buffer.toString();
-    }*/
+    }
 
     @Override
     public void close() throws Exception {
@@ -85,6 +83,7 @@ public class TableEditor implements AutoCloseable {
         public static void main(String[] args) throws Exception {
         Properties pr = new Properties();
             TableEditor tb = new TableEditor(pr);
-            tb.createTable("1");
+            tb.createTable("Java_Table");
+            System.out.println(tb.getTableScheme("Java_Table"));
         }
 }
